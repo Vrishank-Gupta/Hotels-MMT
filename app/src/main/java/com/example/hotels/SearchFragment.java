@@ -4,10 +4,13 @@ import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,15 +19,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.hotels.hoteldata.CoordinateResponse;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SearchFragment extends Fragment {
 
+    private String apiToken = "f729a1e36f4533";
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     ImageView dateIcon;
     TextView tvDate;
+    Button btnSubmit;
+    EditText etLocation;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -32,6 +47,8 @@ public class SearchFragment extends Fragment {
 
         Toast.makeText(getContext(), "Hola", Toast.LENGTH_SHORT).show();
 
+        etLocation = view.findViewById(R.id.etLocation);
+        btnSubmit = view.findViewById(R.id.btnSubmit);
         dateIcon = view.findViewById(R.id.dateIcon);
         tvDate = view.findViewById(R.id.tvDate);
 
@@ -72,6 +89,67 @@ public class SearchFragment extends Fragment {
         };
 
 
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String query = etLocation.getText().toString();
+                query = query.trim();
+                query = query.replaceAll(" ", "%20");
+
+                final Retrofit retrofit = new Retrofit.Builder().baseUrl(CoordinateAPI.url).addConverterFactory(GsonConverterFactory.create()).build();
+
+                CoordinateAPI api = retrofit.create(CoordinateAPI.class);
+
+                Call<List<CoordinateResponse>> call = api.getCoordinates(apiToken,query,"json");
+
+                call.enqueue(new Callback<List<CoordinateResponse>>() {
+                    @Override
+                    public void onResponse(Call<List<CoordinateResponse>> call, Response<List<CoordinateResponse>> response) {
+                        Log.d("CoordinateResponse", "onResponse: " + response.body());
+
+                        CoordinateResponse coordinateResponse = response.body().get(0);
+
+                        String longitude = coordinateResponse.getLon();
+                        String latitude = coordinateResponse.getLat();
+
+                        Log.d("CoordinateResponse1", "onResponse: " + latitude + " " + longitude);
+
+                        searchHotels(longitude, latitude);
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<CoordinateResponse>> call, Throwable t) {
+                        Log.d("CoordinateResponse", "onResponse: " + t.getMessage());
+
+                    }
+                });
+
+            }
+        });
+
         return  view;
+    }
+
+    private void searchHotels(String longitude, String latitude) {
+
+        final Retrofit retrofit = new Retrofit.Builder().baseUrl(HotelAPI.url).addConverterFactory(GsonConverterFactory.create()).build();
+
+        HotelAPI api = retrofit.create(HotelAPI.class);
+
+        Call<ResponseHotel> call = api.getHotels(latitude,longitude);
+
+        call.enqueue(new Callback<ResponseHotel>() {
+            @Override
+            public void onResponse(Call<ResponseHotel> call, Response<ResponseHotel> response) {
+                Log.d("ResponseHotel", "onResponse: " + response.body().toString());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseHotel> call, Throwable t) {
+
+            }
+        });
+
     }
 }
