@@ -16,7 +16,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     SignInButton btnSignIn;
     GoogleSignInClient mGoogleSignInClient;
@@ -39,14 +39,14 @@ public class MainActivity extends AppCompatActivity {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(account != null) {
 
-            startActivity(new Intent(MainActivity.this, HotelsActivity.class));
+            startActivity(new Intent(LoginActivity.this, HotelsActivity.class));
             finish();
         }
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Hello", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Hello", Toast.LENGTH_SHORT).show();
                 signIn();
             }
         });
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             Log.d("myToken", "handleSignInResult: " + account.getId());
-            startActivity(new Intent(MainActivity.this,HotelsActivity.class));
+            startActivity(new Intent(LoginActivity.this,HotelsActivity.class));
             finish();
         } catch (ApiException e) {
 
