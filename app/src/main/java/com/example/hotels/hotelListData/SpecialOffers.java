@@ -1,4 +1,4 @@
-package com.example.hotels.hoteldata;
+package com.example.hotels.hotelListData;
 
 import java.util.List;
 import com.google.gson.annotations.SerializedName;

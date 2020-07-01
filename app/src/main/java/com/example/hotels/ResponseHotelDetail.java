@@ -2,18 +2,14 @@ package com.example.hotels;
 
 import java.util.List;
 
-import com.example.hotels.hotelListData.DataItem;
-import com.example.hotels.hotelListData.Paging;
-import com.example.hotels.hotelListData.Status;
+import com.example.hotels.eachHotelData.DataItem;
+import com.example.hotels.eachHotelData.Status;
 import com.google.gson.annotations.SerializedName;
 
-public class ResponseHotel{
+public class ResponseHotelDetail {
 
 	@SerializedName("data")
 	private List<DataItem> data;
-
-	@SerializedName("paging")
-	private Paging paging;
 
 	@SerializedName("status")
 	private Status status;
@@ -22,19 +18,14 @@ public class ResponseHotel{
 		return data;
 	}
 
-	public Paging getPaging(){
-		return paging;
-	}
-
 	public Status getStatus(){
 		return status;
 	}
 
 	@Override
 	public String toString() {
-		return "ResponseHotel{" +
+		return "ResponseHotelDetail{" +
 				"data=" + data +
-				", paging=" + paging +
 				", status=" + status +
 				'}';
 	}

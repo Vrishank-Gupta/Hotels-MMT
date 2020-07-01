@@ -19,7 +19,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.hotels.hoteldata.CoordinateResponse;
+import com.example.hotels.API.CoordinateAPI;
+import com.example.hotels.API.HotelAPI;
+import com.example.hotels.hotelListData.CoordinateResponse;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -143,10 +145,35 @@ public class SearchFragment extends Fragment {
             @Override
             public void onResponse(Call<ResponseHotel> call, Response<ResponseHotel> response) {
                 Log.d("ResponseHotel", "onResponse: " + response.body().toString());
+
+                String id  = response.body().getData().get(0).getLocationId();
+
+                fetchDetails(id);
             }
 
             @Override
             public void onFailure(Call<ResponseHotel> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+    private void fetchDetails(String id){
+        final Retrofit retrofit = new Retrofit.Builder().baseUrl(HotelAPI.url).addConverterFactory(GsonConverterFactory.create()).build();
+
+        HotelAPI api = retrofit.create(HotelAPI.class);
+
+        Call<ResponseHotelDetail> call = api.getDetail(id, "INR");
+
+        call.enqueue(new Callback<ResponseHotelDetail>() {
+            @Override
+            public void onResponse(Call<ResponseHotelDetail> call, Response<ResponseHotelDetail> response) {
+                Log.d("HotelDetail", "onResponse: " + response.body().toString());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseHotelDetail> call, Throwable t) {
 
             }
         });

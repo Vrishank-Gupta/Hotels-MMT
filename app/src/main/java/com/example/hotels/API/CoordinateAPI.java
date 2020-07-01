@@ -1,6 +1,6 @@
-package com.example.hotels;
+package com.example.hotels.API;
 
-import com.example.hotels.hoteldata.CoordinateResponse;
+import com.example.hotels.hotelListData.CoordinateResponse;
 
 import java.util.List;
 

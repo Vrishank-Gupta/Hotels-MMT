@@ -1,8 +1,8 @@
-package com.example.hotels.hoteldata;
+package com.example.hotels.hotelListData;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Original{
+public class Medium{
 
 	@SerializedName("width")
 	private String width;

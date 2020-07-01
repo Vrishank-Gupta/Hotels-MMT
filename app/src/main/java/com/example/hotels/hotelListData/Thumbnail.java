@@ -1,8 +1,8 @@
-package com.example.hotels.hoteldata;
+package com.example.hotels.hotelListData;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Medium{
+public class Thumbnail{
 
 	@SerializedName("width")
 	private String width;
