@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         if(account != null) {
 
             startActivity(new Intent(MainActivity.this, HotelsActivity.class));
+            finish();
         }
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             Log.d("myToken", "handleSignInResult: " + account.getId());
             startActivity(new Intent(MainActivity.this,HotelsActivity.class));
+            finish();
         } catch (ApiException e) {
 
             Log.w("GoogleLogin", "signInResult:failed code=" + e.getStatusCode());
