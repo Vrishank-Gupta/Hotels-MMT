@@ -13,6 +13,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,17 +25,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.hotels.API.CityAPI;
-import com.example.hotels.API.HotelAPI;
 import com.example.hotels.API.URLAPI;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -43,9 +38,9 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-//import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class SearchFragment extends Fragment {
 
@@ -54,11 +49,13 @@ public class SearchFragment extends Fragment {
     private String apiToken = "f729a1e36f4533";
     private DatePickerDialog.OnDateSetListener mCheckInDateSetListener;
     private DatePickerDialog.OnDateSetListener mCheckOutDateSetListener;
+    private ProgressBar spinner;
 
     ImageView checkInDateIcon, checkOutdateIcon;
     TextView tvCheckInDate;
     TextView tvCheckOutDate;
     Button btnSubmit;
+    long tStart,tEnd;
     List<String> cities;
     boolean set1,set2;
     AutoCompleteTextView etLocation;
@@ -74,6 +71,9 @@ public class SearchFragment extends Fragment {
         tvCheckInDate = view.findViewById(R.id.tvCheckInDate);
         tvCheckOutDate = view.findViewById(R.id.tvCheckoutDate);
         checkOutdateIcon = view.findViewById(R.id.dateCheckOutIcon);
+        spinner = (ProgressBar)view.findViewById(R.id.progressBar1);
+
+        spinner.setVisibility(View.VISIBLE);
 
         String[] ProgLanguages = { "Java", "C", "C++", ".Net", "PHP", "Perl",
                 "Objective-c", "Small-Talk", "C#", "Ruby", "ASP", "ASP .NET" };
@@ -98,7 +98,10 @@ public class SearchFragment extends Fragment {
 
                 etLocation.setThreshold(1);
 
+
                 etLocation.setAdapter(arrayAdapter);
+                spinner.setVisibility(View.GONE);
+
 
             }
 
@@ -184,6 +187,9 @@ public class SearchFragment extends Fragment {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                spinner.setVisibility(View.VISIBLE);
+
+
 
                 if(etLocation.getText()==null || etLocation.getText().toString().trim().equals(""))
                 {
@@ -201,6 +207,7 @@ public class SearchFragment extends Fragment {
                 }
 
                 else{
+                    tStart = System.currentTimeMillis();
 
                     String checkInDate = tvCheckInDate.getText().toString();
                     checkInDate = checkInDate.trim();
@@ -231,14 +238,61 @@ public class SearchFragment extends Fragment {
                         public void onResponse(Call<ResponseURL> call, retrofit2.Response<ResponseURL> response1) {
                             Log.d("URLOUtput", "onResponse: " + response1.body() + postBody);
 
-                            String url = response1.body().getUrl();
+                            if(response1.body()!=null){
 
-                            fetchdata(url+"/");
+                                String url = response1.body().getUrl();
+
+                                RequestQueue queue = Volley.newRequestQueue(getContext());
+
+                                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                                        new Response.Listener<String>() {
+                                            @Override
+                                            public void onResponse(String response) {
+
+                                                if(response != null){
+                                                    Gson gson = new Gson();
+                                                    ResponseMainHotel responseMainHotel = gson.fromJson(response , ResponseMainHotel.class);
+                                                    tEnd = System.currentTimeMillis();
+
+                                                    long tDelta = tEnd - tStart;
+                                                    double elapsedSeconds = tDelta / 1000.0;
+                                                    spinner.setVisibility(View.GONE);
+
+                                                    Toast.makeText(getContext(), responseMainHotel.getData().get(0).getHn() + elapsedSeconds, Toast.LENGTH_SHORT).show();
+                                                }
+
+                                                else {
+                                                    spinner.setVisibility(View.GONE);
+
+                                                    Toast.makeText(getContext(), "Some Error Has Occured", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Toast.makeText(getContext(), "Some Error Has Occured", Toast.LENGTH_SHORT).show();
+
+                                        spinner.setVisibility(View.GONE);
+
+                                    }
+                                });
+
+                                queue.add(stringRequest);
+                            }
+
+                            else
+                                Toast.makeText(getContext(), "Some Error Has Occured", Toast.LENGTH_SHORT).show();
+
+
                         }
 
                         @Override
                         public void onFailure(Call<ResponseURL> call, Throwable t) {
                             Log.d("URLOUtput", "onFailure: " + t.getMessage());
+                            Toast.makeText(getContext(), "Some Error Has Occured", Toast.LENGTH_SHORT).show();
+                            spinner.setVisibility(View.GONE);
+
+
 
                         }
                     });
@@ -247,29 +301,6 @@ public class SearchFragment extends Fragment {
         });
 
         return  view;
-    }
-
-    private void fetchdata(String ur)
-    {
-
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, ur,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        Gson gson = new Gson();
-                        ResponseMainHotel responseMainHotel = gson.fromJson(response , ResponseMainHotel.class);
-                        Log.d("Volleyyyyyy", "onResponse: " + responseMainHotel.getData().get(0).getHn());
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-            }
-        });
-
-        queue.add(stringRequest);
     }
 
 
