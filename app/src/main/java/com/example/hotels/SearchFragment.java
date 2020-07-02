@@ -167,10 +167,14 @@ public class SearchFragment extends Fragment {
                         @Override
                         public void onResponse(Call<ResponseMainHotel> call, Response<ResponseMainHotel> response) {
 
-                            for(int i = 0;i<response.body().getData().size();i++)
-                            {
-                                Log.d("NamesOfHotels", "onResponse: " + response.body().getData().get(i).getHn());
-                            }
+                            if(response.body()!=null && response.body().getData()!=null &&response.body().getData().size()>0)
+                            { for(int i = 0;i<response.body().getData().size();i++)
+                                {
+                                    Log.d("NamesOfHotels", "onResponse: " + response.body().getData().get(i).getHn());
+                                }
+                           }
+                            else
+                                Toast.makeText(getContext(), "Couldn't find any hotel!", Toast.LENGTH_LONG).show();
 
                         }
 
