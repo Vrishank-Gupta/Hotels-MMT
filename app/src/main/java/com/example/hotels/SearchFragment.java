@@ -19,14 +19,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.hotels.API.CoordinateAPI;
 import com.example.hotels.API.HotelAPI;
-import com.example.hotels.hotelListData.CoordinateResponse;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -98,30 +95,32 @@ public class SearchFragment extends Fragment {
                 query = query.trim();
                 query = query.replaceAll(" ", "%20");
 
-                final Retrofit retrofit = new Retrofit.Builder().baseUrl(CoordinateAPI.url).addConverterFactory(GsonConverterFactory.create()).build();
 
-                CoordinateAPI api = retrofit.create(CoordinateAPI.class);
 
-                Call<List<CoordinateResponse>> call = api.getCoordinates(apiToken,query,"json");
+                final Retrofit retrofit = new Retrofit.Builder().baseUrl(HotelAPI.url).addConverterFactory(GsonConverterFactory.create()).build();
 
-                call.enqueue(new Callback<List<CoordinateResponse>>() {
+                HotelAPI api = retrofit.create(HotelAPI.class);
+
+                Call<ResponseMainHotel> call = api.getHotels("2820046943342890302");
+
+                call.enqueue(new Callback<ResponseMainHotel>() {
                     @Override
-                    public void onResponse(Call<List<CoordinateResponse>> call, Response<List<CoordinateResponse>> response) {
+                    public void onResponse(Call<ResponseMainHotel> call, Response<ResponseMainHotel> response) {
                         Log.d("CoordinateResponse", "onResponse: " + response.body());
 
-                        CoordinateResponse coordinateResponse = response.body().get(0);
-
-                        String longitude = coordinateResponse.getLon();
-                        String latitude = coordinateResponse.getLat();
-
-                        Log.d("CoordinateResponse1", "onResponse: " + latitude + " " + longitude);
-
-                        searchHotels(longitude, latitude);
+                        ResponseMainHotel responseMainHotel = response.body();
+//
+//                        String longitude = coordinateResponse.getLon();
+//                        String latitude = coordinateResponse.getLat();
+//
+//                        Log.d("CoordinateResponse1", "onResponse: " + latitude + " " + longitude);
+//
+//                        searchHotels(longitude, latitude);
 
                     }
 
                     @Override
-                    public void onFailure(Call<List<CoordinateResponse>> call, Throwable t) {
+                    public void onFailure(Call<ResponseMainHotel> call, Throwable t) {
                         Log.d("CoordinateResponse", "onResponse: " + t.getMessage());
 
                     }
@@ -133,50 +132,58 @@ public class SearchFragment extends Fragment {
         return  view;
     }
 
-    private void searchHotels(String longitude, String latitude) {
 
-        final Retrofit retrofit = new Retrofit.Builder().baseUrl(HotelAPI.url).addConverterFactory(GsonConverterFactory.create()).build();
 
-        HotelAPI api = retrofit.create(HotelAPI.class);
 
-        Call<ResponseHotel> call = api.getHotels(latitude,longitude);
 
-        call.enqueue(new Callback<ResponseHotel>() {
-            @Override
-            public void onResponse(Call<ResponseHotel> call, Response<ResponseHotel> response) {
-                Log.d("ResponseHotel", "onResponse: " + response.body().toString());
 
-                String id  = response.body().getData().get(0).getLocationId();
 
-                fetchDetails(id);
-            }
 
-            @Override
-            public void onFailure(Call<ResponseHotel> call, Throwable t) {
 
-            }
-        });
-
-    }
-
-    private void fetchDetails(String id){
-        final Retrofit retrofit = new Retrofit.Builder().baseUrl(HotelAPI.url).addConverterFactory(GsonConverterFactory.create()).build();
-
-        HotelAPI api = retrofit.create(HotelAPI.class);
-
-        Call<ResponseHotelDetail> call = api.getDetail(id, "INR");
-
-        call.enqueue(new Callback<ResponseHotelDetail>() {
-            @Override
-            public void onResponse(Call<ResponseHotelDetail> call, Response<ResponseHotelDetail> response) {
-                Log.d("HotelDetail", "onResponse: " + response.body().toString());
-            }
-
-            @Override
-            public void onFailure(Call<ResponseHotelDetail> call, Throwable t) {
-
-            }
-        });
-
-    }
+//    private void searchHotels(String longitude, String latitude) {
+//
+//        final Retrofit retrofit = new Retrofit.Builder().baseUrl(HotelAPI.url).addConverterFactory(GsonConverterFactory.create()).build();
+//
+//        HotelAPI api = retrofit.create(HotelAPI.class);
+//
+//        Call<ResponseHotel> call = api.getHotels(latitude,longitude);
+//
+//        call.enqueue(new Callback<ResponseHotel>() {
+//            @Override
+//            public void onResponse(Call<ResponseHotel> call, Response<ResponseHotel> response) {
+//                Log.d("ResponseHotel", "onResponse: " + response.body().toString());
+//
+//                String id  = response.body().getData().get(0).getLocationId();
+//
+//                fetchDetails(id);
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseHotel> call, Throwable t) {
+//
+//            }
+//        });
+//
+//    }
+//
+//    private void fetchDetails(String id){
+//        final Retrofit retrofit = new Retrofit.Builder().baseUrl(HotelAPI.url).addConverterFactory(GsonConverterFactory.create()).build();
+//
+//        HotelAPI api = retrofit.create(HotelAPI.class);
+//
+//        Call<ResponseHotelDetail> call = api.getDetail(id, "INR");
+//
+//        call.enqueue(new Callback<ResponseHotelDetail>() {
+//            @Override
+//            public void onResponse(Call<ResponseHotelDetail> call, Response<ResponseHotelDetail> response) {
+//                Log.d("HotelDetail", "onResponse: " + response.body().toString());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseHotelDetail> call, Throwable t) {
+//
+//            }
+//        });
+//
+//    }
 }

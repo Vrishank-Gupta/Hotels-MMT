@@ -1,23 +1,24 @@
 package com.example.hotels.API;
 
-import com.example.hotels.ResponseHotel;
-import com.example.hotels.ResponseHotelDetail;
+import com.example.hotels.ResponseMainHotel;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface HotelAPI {
-    public static String url="https://tripadvisor1.p.rapidapi.com/hotels/";
+    public static String url="https://hermes.goibibo.com/hotels/v12/search/data/";
 
-    @Headers("x-rapidapi-key:ERChGHynKsmsh91pj1WqJy2D1dEGp1IrwMsjsnOGdOFXijuDK6")
-    @GET("list-by-latlng")
-    Call<ResponseHotel> getHotels(@Query("latitude") String lat, @Query("longitude") String longitude);
+
+//    https://hermes.goibibo.com/hotels/v12/search/data/v3/2820046943342890302/20200706/20200707/1-2-0?s=popularity&cur=INR&tmz=-330
+    @GET("v3/{city}/20201010/20201011/1-2-0?s=popularity&cur=INR&tmz=-330")
+    Call<ResponseMainHotel> getHotels(@Path("city") String cityId);
 
 
     @Headers("x-rapidapi-key:ERChGHynKsmsh91pj1WqJy2D1dEGp1IrwMsjsnOGdOFXijuDK6")
     @GET("get-details")
-    Call<ResponseHotelDetail> getDetail(@Query("location_id") String location_id, @Query("currency") String currency);
+    Call<ResponseMainHotel> getDetail(@Query("location_id") String location_id, @Query("currency") String currency);
 
 }
