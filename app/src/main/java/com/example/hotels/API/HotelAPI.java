@@ -13,8 +13,8 @@ public interface HotelAPI {
 
 
 //    https://hermes.goibibo.com/hotels/v12/search/data/v3/2820046943342890302/20200706/20200707/1-2-0?s=popularity&cur=INR&tmz=-330
-    @GET("v3/{city}/20201010/20201011/1-2-0?s=popularity&cur=INR&tmz=-330")
-    Call<ResponseMainHotel> getHotels(@Path("city") String cityId);
+    @GET("v3/{city}/{checkin}/{checkout}/1-2-0?s=popularity&cur=INR&tmz=-330")
+    Call<ResponseMainHotel> getHotels(@Path("city") String cityId, @Path("checkin") String checkIn, @Path("checkout") String checkOut);
 
 
     @Headers("x-rapidapi-key:ERChGHynKsmsh91pj1WqJy2D1dEGp1IrwMsjsnOGdOFXijuDK6")
