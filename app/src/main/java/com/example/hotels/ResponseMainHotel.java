@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class ResponseMainHotel{
 
+
 	@SerializedName("next")
 	private String next;
 

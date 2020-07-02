@@ -8,9 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,19 +20,36 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.hotels.API.CityAPI;
 import com.example.hotels.API.HotelAPI;
+import com.example.hotels.API.URLAPI;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
+//import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SearchFragment extends Fragment {
+
+
 
     private String apiToken = "f729a1e36f4533";
     private DatePickerDialog.OnDateSetListener mCheckInDateSetListener;
@@ -41,30 +59,62 @@ public class SearchFragment extends Fragment {
     TextView tvCheckInDate;
     TextView tvCheckOutDate;
     Button btnSubmit;
+    List<String> cities;
     boolean set1,set2;
-    EditText etLocation;
+    AutoCompleteTextView etLocation;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search,container,false);
-
-        Toast.makeText(getContext(), "Hola", Toast.LENGTH_SHORT).show();
-
-        set1 = true;
+        etLocation = view.findViewById(R.id.autoCity);
+        set1 = false;
         set2 = false;
-        etLocation = view.findViewById(R.id.etLocation);
         btnSubmit = view.findViewById(R.id.btnSubmit);
         checkInDateIcon = view.findViewById(R.id.checkInDateIcon);
         tvCheckInDate = view.findViewById(R.id.tvCheckInDate);
         tvCheckOutDate = view.findViewById(R.id.tvCheckoutDate);
         checkOutdateIcon = view.findViewById(R.id.dateCheckOutIcon);
 
+        String[] ProgLanguages = { "Java", "C", "C++", ".Net", "PHP", "Perl",
+                "Objective-c", "Small-Talk", "C#", "Ruby", "ASP", "ASP .NET" };
+
+
+
+
+        final Retrofit retrofit = new Retrofit.Builder().baseUrl(CityAPI.url).addConverterFactory(GsonConverterFactory.create()).build();
+
+        CityAPI api = retrofit.create(CityAPI.class);
+
+        final Call<CityResponse> call = api.getCities();
+
+        call.enqueue(new Callback<CityResponse>() {
+            @Override
+            public void onResponse(Call<CityResponse> call, retrofit2.Response<CityResponse> response) {
+
+                Log.d("AutoComplete", "onResponse: " + response.body().toString());
+                cities = response.body().getJsonMember1();
+                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(),
+                        android.R.layout.select_dialog_item, cities);
+
+                etLocation.setThreshold(1);
+
+                etLocation.setAdapter(arrayAdapter);
+
+            }
+
+            @Override
+            public void onFailure(Call<CityResponse> call, Throwable t) {
+
+            }
+        });
+
+
 
         Date c = Calendar.getInstance().getTime();
         SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-        tvCheckInDate.setText(df.format(c));
+        tvCheckInDate.setText("Check In Date");
 
-        tvCheckOutDate.setText(df.format(c));
+        tvCheckOutDate.setText("Check Out Date");
 
         checkOutdateIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,10 +191,14 @@ public class SearchFragment extends Fragment {
                     Toast.makeText(getContext(), "Please Fill All the Fields", Toast.LENGTH_SHORT).show();
                 }
 
-//                if(!set2)
-//                {
-//                    tvCheckOutDate.setError("Please Fill CheckOut Date");
-//                }
+                if(!set1)
+                {
+                    tvCheckInDate.setError("Please Fill CheckIn Date");
+                }
+                if(!set2)
+                {
+                    tvCheckOutDate.setError("Please Fill CheckOut Date");
+                }
 
                 else{
 
@@ -156,41 +210,68 @@ public class SearchFragment extends Fragment {
                     checkOutDate = checkOutDate.trim();
                     checkOutDate = checkOutDate.replaceAll("/", "");
 
+                    String loc = etLocation.getText().toString();
 
-                    final Retrofit retrofit = new Retrofit.Builder().baseUrl(HotelAPI.url).addConverterFactory(GsonConverterFactory.create()).build();
+//                    loc = loc.trim();
+//                    loc = loc.replaceAll(" ", "");
 
-                    HotelAPI api = retrofit.create(HotelAPI.class);
+                    final String postBody="{\"name\": \"" + loc + "\",\"start_date\":\"" + checkInDate + "\",\"end_date\":\"" + checkOutDate+"\"}" ;
+                    Log.d("postBody", "onClick: " + postBody);
 
-                    Call<ResponseMainHotel> call = api.getHotels("2820046943342890302",checkInDate,checkOutDate);
 
-                    call.enqueue(new Callback<ResponseMainHotel>() {
+
+                    final Retrofit retrofit1 = new Retrofit.Builder().baseUrl(URLAPI.ur).addConverterFactory(GsonConverterFactory.create()).build();
+                    URLAPI api1 = retrofit1.create(URLAPI.class);
+
+                    Call<ResponseURL> call1 = api1.getUrl(loc,checkInDate,checkOutDate);
+                    Log.d("posturl", "onClick: " + call1.request().url());
+
+                    call1.enqueue(new Callback<ResponseURL>() {
                         @Override
-                        public void onResponse(Call<ResponseMainHotel> call, Response<ResponseMainHotel> response) {
+                        public void onResponse(Call<ResponseURL> call, retrofit2.Response<ResponseURL> response1) {
+                            Log.d("URLOUtput", "onResponse: " + response1.body() + postBody);
 
-                            if(response.body()!=null && response.body().getData()!=null &&response.body().getData().size()>0)
-                            { for(int i = 0;i<response.body().getData().size();i++)
-                                {
-                                    Log.d("NamesOfHotels", "onResponse: " + response.body().getData().get(i).getHn());
-                                }
-                           }
-                            else
-                                Toast.makeText(getContext(), "Couldn't find any hotel!", Toast.LENGTH_LONG).show();
+                            String url = response1.body().getUrl();
 
+                            fetchdata(url+"/");
                         }
 
                         @Override
-                        public void onFailure(Call<ResponseMainHotel> call, Throwable t) {
-                            Log.d("NamesOfHotels", "onResponse: " + t.getMessage());
+                        public void onFailure(Call<ResponseURL> call, Throwable t) {
+                            Log.d("URLOUtput", "onFailure: " + t.getMessage());
 
                         }
                     });
                 }
-
-
-
             }
         });
 
         return  view;
     }
+
+    private void fetchdata(String ur)
+    {
+
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, ur,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        Gson gson = new Gson();
+                        ResponseMainHotel responseMainHotel = gson.fromJson(response , ResponseMainHotel.class);
+                        Log.d("Volleyyyyyy", "onResponse: " + responseMainHotel.getData().get(0).getHn());
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+
+        queue.add(stringRequest);
+    }
+
+
 }
+

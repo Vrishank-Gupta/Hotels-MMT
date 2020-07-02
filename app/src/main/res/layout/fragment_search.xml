@@ -14,14 +14,14 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <com.google.android.material.textfield.TextInputEditText
+        <AutoCompleteTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:id="@+id/etLocation"
-            android:hint="Enter Location"
-            />
+            android:ems="10"
+            android:hint="Enter City"
+            android:id="@+id/autoCity"/>
         </com.google.android.material.textfield.TextInputLayout>
+
 
        <LinearLayout
            android:layout_width="match_parent"
