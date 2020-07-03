@@ -1,9 +1,10 @@
 package com.example.hotels.HotelHermes;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
-public class Htd{
+public class Htd implements Serializable {
 
 	@SerializedName("ftc")
 	private String ftc;

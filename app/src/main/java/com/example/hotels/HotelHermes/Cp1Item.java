@@ -2,7 +2,9 @@ package com.example.hotels.HotelHermes;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Cp1Item{
+import java.io.Serializable;
+
+public class Cp1Item implements Serializable {
 
 	@SerializedName("pt")
 	private String pt;

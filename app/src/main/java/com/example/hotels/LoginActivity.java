@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hotels.HotelHermes.DataItem;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -16,16 +17,24 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LoginActivity extends AppCompatActivity {
 
     SignInButton btnSignIn;
     GoogleSignInClient mGoogleSignInClient;
+    public static GoogleSignInAccount account;
+
+
     GoogleSignInOptions gso;
+    public static List<DataItem> dataItemArrayList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        dataItemArrayList = new ArrayList<>();
         btnSignIn = findViewById(R.id.btnGoogle);
         btnSignIn.setSize(SignInButton.SIZE_STANDARD);
 
@@ -69,13 +78,16 @@ public class LoginActivity extends AppCompatActivity {
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            account = completedTask.getResult(ApiException.class);
             Log.d("myToken", "handleSignInResult: " + account.getId());
-            startActivity(new Intent(LoginActivity.this,HotelsActivity.class));
+            startActivity(new Intent(LoginActivity.this, HotelsActivity.class));
             finish();
+
+
+
         } catch (ApiException e) {
 
-            Log.w("GoogleLogin", "signInResult:failed code=" + e.getStatusCode());
+            Log.w("GoogleLogin", "signInResult:failed code=" + e.getMessage());
             Toast.makeText(this, "Couldn't Login", Toast.LENGTH_SHORT).show();
         }
     }

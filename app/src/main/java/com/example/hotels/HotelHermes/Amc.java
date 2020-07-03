@@ -2,7 +2,9 @@ package com.example.hotels.HotelHermes;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Amc{
+import java.io.Serializable;
+
+public class Amc implements Serializable {
 
 	@SerializedName("Airport Transfer (on Demand)")
 	private int airportTransferOnDemand;

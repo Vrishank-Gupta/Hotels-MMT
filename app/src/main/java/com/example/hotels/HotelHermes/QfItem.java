@@ -1,10 +1,11 @@
 package com.example.hotels.HotelHermes;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-public class QfItem{
+public class QfItem implements Serializable {
 
 	@SerializedName("n")
 	private String N;

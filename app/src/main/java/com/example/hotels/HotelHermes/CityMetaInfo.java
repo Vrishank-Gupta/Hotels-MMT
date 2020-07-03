@@ -1,9 +1,10 @@
 package com.example.hotels.HotelHermes;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
-public class CityMetaInfo{
+public class CityMetaInfo implements Serializable {
 
 	@SerializedName("gos_msg")
 	private String gosMsg;

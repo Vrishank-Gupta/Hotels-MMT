@@ -2,7 +2,9 @@ package com.example.hotels.HotelHermes;
 
 import com.google.gson.annotations.SerializedName;
 
-public class DhGosafe{
+import java.io.Serializable;
+
+public class DhGosafe implements Serializable {
 
 	@SerializedName("idx")
 	private int idx;

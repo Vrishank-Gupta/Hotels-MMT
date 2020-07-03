@@ -1,13 +1,15 @@
-package com.example.hotels;
+package com.example.hotels.util;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.example.hotels.HotelHermes.CityMetaInfo;
 import com.example.hotels.HotelHermes.DataItem;
 import com.google.gson.annotations.SerializedName;
 
-public class ResponseMainHotel{
+public class ResponseMainHotel implements Serializable {
 
+	public ResponseMainHotel(){}
 
 	@SerializedName("next")
 	private String next;

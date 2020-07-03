@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listviewdata"
+    android:layout_width="match_parent"
+    android:layout_height="44dp"
+    android:orientation="horizontal"
+    android:padding="5dp"
+    android:visibility="visible">
+
+    <ImageView
+        android:id="@+id/tick"
+        android:src="@drawable/ic_check_black_24dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:tint="#008000"
+        />
+
+    <TextView
+        android:id="@+id/amenity"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="sans-serif"
+        android:layout_marginStart="5dp"
+        android:text="Couple Friendly"
+        />
+</LinearLayout>

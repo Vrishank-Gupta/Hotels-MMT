@@ -2,7 +2,9 @@ package com.example.hotels.HotelHermes;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Tyhc{
+import java.io.Serializable;
+
+public class Tyhc implements Serializable {
 
 	@SerializedName("Hostel")
 	private int hostel;

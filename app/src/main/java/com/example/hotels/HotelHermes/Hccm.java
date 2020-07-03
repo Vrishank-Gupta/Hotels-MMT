@@ -2,7 +2,9 @@ package com.example.hotels.HotelHermes;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Hccm{
+import java.io.Serializable;
+
+public class Hccm implements Serializable {
 
 	@SerializedName("Taj Hotels, Resorts & Palaces")
 	private int tajHotelsResortsPalaces;
